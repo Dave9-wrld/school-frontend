@@ -20,18 +20,33 @@ export interface StudentProfile {
 
 export interface Student {
   id: number;
+  user_id?: number;
   name: string;
+  first_name?: string;
+  last_name?: string;
   username: string;
+  email?: string;
+  phone_number?: string;
   admission_number: string;
+  date_of_birth?: string;
   current_class: number | null;
   current_class_name: string | null;
+  is_active?: boolean;
 }
 
 export interface Lecturer {
   id: number;
   name: string;
+  first_name?: string;
+  last_name?: string;
   username: string;
+  email?: string;
+  phone_number?: string;
   employee_id: string;
+  department?: string;
+  is_active?: boolean;
+  assigned_classes?: string[];
+  assigned_subjects?: string[];
 }
 
 export interface ClassGroup {
@@ -48,6 +63,14 @@ export interface Course {
   code: string;
   teacher: number | null;
   teacher_name?: string;
+  grades_count?: number;
+}
+
+export interface AcademicSession {
+  id: number;
+  session: string;
+  is_current: boolean;
+  grades_count?: number;
 }
 
 export interface Grade {
@@ -58,7 +81,8 @@ export interface Grade {
   subject_name: string;
   session: number;
   session_name: string;
-  continous_assessment_score: string | number;
+  continuous_assessment_score: string | number;
+  continous_assessment_score?: string | number;
   exam_score: string | number;
   total_score: string | number;
 }
@@ -67,6 +91,10 @@ export interface Stats {
   total_teachers: number;
   total_students: number;
   total_subjects: number;
+  total_classes?: number;
+  total_grades?: number;
+  current_session?: string | null;
+  current_session_id?: number | null;
 }
 
 export interface PortalData {
@@ -75,6 +103,7 @@ export interface PortalData {
   students: Student[];
   classes: ClassGroup[];
   lecturers: Lecturer[];
+  sessions: AcademicSession[];
   profile: StudentProfile | null;
   stats: Stats | null;
 }

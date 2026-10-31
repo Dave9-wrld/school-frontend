@@ -3540,4 +3540,101 @@ td strong {
   border: 1px solid #f4d0d6;
 }
 
+/* Admin Workspace Enhanced UX Styles */
+.button-danger {
+  color: #fff !important;
+  background: #9b2c3b !important;
+  border: 1px solid #9b2c3b;
+  box-shadow: 0 3px 6px #9b2c3b20;
+}
+
+.button-danger:hover:not(:disabled) {
+  background: #802230 !important;
+}
+
+.button-danger-outline {
+  color: #9b2c3b;
+  background: transparent;
+  border: 1px solid #f4d0d6;
+}
+
+.button-danger-outline:hover:not(:disabled) {
+  background: #faeaec;
+  border-color: #9b2c3b;
+}
+
+.status-active i {
+  background: #2b7a4b;
+}
+
+.status-inactive i {
+  background: #9b2c3b;
+}
+
+.table-filter-select {
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--ink);
+  font-size: 12px;
+  font-family: inherit;
+  outline: none;
+}
+
+.table-filter-select:focus {
+  border-color: var(--burgundy);
+}
+
+.form-actions-split {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24px;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.confirm-delete-box {
+  padding: 16px;
+  background: #fdf5f5;
+  border: 1px solid #f4d0d6;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.confirm-delete-box h4 {
+  color: #9b2c3b;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.confirm-delete-box p {
+  color: #555;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.metric-pill-session {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #e6f4ea;
+  color: #137333;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.metric-pill-session i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #137333;
+}
+
 /*# sourceMappingURL=src_app_globals_css_1igg3k2-ikub5._.single.css.map*/

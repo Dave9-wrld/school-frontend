@@ -1,7 +1,7 @@
 import type { NextRequest } from 'next/server';
 export const dynamic = 'force-dynamic';
 
-const allowed = /^(login|register|logout|password-reset(?:\/confirm)?|admin\/(users|stats|classes|classes\/\d+|students|students\/\d+\/class|teachers)|teacher\/(subjects|students|classes|grades|grades\/record\/\d+)|student\/(grades|profile))$/;
+const allowed = /^(login|register|logout|password-reset(?:\/confirm)?|admin\/(users|stats|classes|classes\/\d+|students|students\/\d+|students\/\d+\/class|teachers|teachers\/\d+|subjects|subjects\/\d+|sessions|sessions\/\d+|grades|grades\/\d+)|teacher\/(subjects|students|classes|grades|grades\/record\/\d+)|student\/(grades|profile))$/;
 
 async function proxy(request: NextRequest, context: {params: Promise<{path: string[]}>}) {
   const { path } = await context.params;
@@ -12,10 +12,13 @@ async function proxy(request: NextRequest, context: {params: Promise<{path: stri
   for (const name of ['authorization', 'content-type']) {
     const value = request.headers.get(name); if (value) headers.set(name, value);
   }
+  const search = request.nextUrl.search || '';
   try {
-    const response = await fetch(`${origin.replace(/\/$/,'')}/api/${endpoint}/`, {
+    const hasBody = !['GET', 'HEAD', 'DELETE'].includes(request.method);
+    const body = hasBody ? await request.text() : undefined;
+    const response = await fetch(`${origin.replace(/\/$/,'')}/api/${endpoint}/${search}`, {
       method:request.method, headers, cache:'no-store', redirect:'manual',
-      body:request.method === 'GET' ? undefined : await request.text(),
+      body,
       signal:AbortSignal.timeout(15000),
     });
     const responseHeaders = {'Content-Type':response.headers.get('content-type') || 'application/json', 'Cache-Control':'no-store', 'Vary':'Authorization'};
@@ -23,4 +26,4 @@ async function proxy(request: NextRequest, context: {params: Promise<{path: stri
     return new Response(await response.text(), {status:response.status,headers:responseHeaders});
   } catch { return Response.json({detail:'Academic service unavailable.'}, {status:503,headers:{'Cache-Control':'no-store'}}); }
 }
-export { proxy as GET, proxy as POST, proxy as PATCH };
+export { proxy as GET, proxy as POST, proxy as PATCH, proxy as DELETE, proxy as PUT };
