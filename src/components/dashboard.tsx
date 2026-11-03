@@ -235,6 +235,7 @@ export function Dashboard() {
           {nav.map((item) => (
             <button
               key={item.view}
+              aria-current={view === item.view ? "page" : undefined}
               className={`nav-item ${view === item.view ? 'nav-active' : ''}`}
               onClick={() => navigate(item.view)}
             >
@@ -245,17 +246,6 @@ export function Dashboard() {
           ))}
         </nav>
         <div className="sidebar-bottom">
-          <div className="sidebar-note">
-            <span className="note-star">✳</span>
-            <h3>
-              A little support.
-              <br />
-              A lot of possibility.
-            </h3>
-            <button onClick={() => navigate('support')}>
-              Find your next step <ArrowUpRight size={15} />
-            </button>
-          </div>
           <button className={`nav-item ${view === 'support' ? 'nav-active' : ''}`} onClick={() => navigate('support')}>
             <CircleHelp size={18} /> Help & guidance
           </button>
@@ -300,39 +290,21 @@ export function Dashboard() {
           </div>
         </header>
         <main className="dashboard-main" id="main-content">
-          <nav className="page-navigation" aria-label="Page navigation">
-            <button className="back-button" onClick={goBack} disabled={navigationDepth === 0 && view === 'overview'}>
+          {view !== "overview" && <nav className="page-navigation" aria-label="Page navigation">
+            <button className="back-button" onClick={goBack}>
               <ArrowLeft size={16} /> Back
             </button>
-            {view !== 'overview' && (
               <button className="text-button" onClick={() => navigate('overview')}>
                 <LayoutDashboard size={15} /> Back to overview
               </button>
-            )}
-          </nav>
-          <div className="page-heading">
+          </nav>}
+          <div className="page-heading dashboard-title">
             <div>
-              <span className="eyebrow">DAVE UNIVERSITY / {view === 'overview' ? 'YOUR SPACE TO GROW' : title.toUpperCase()}</span>
-              <h1>
-                {view === 'overview' ? (
-                  <>
-                    Good to see you, <em>{name.split(' ')[0]}.</em>
-                  </>
-                ) : (
-                  <>
-                    {title}
-                    <span className="heading-dot">.</span>
-                  </>
-                )}
-              </h1>
-              <p>
-                {view === 'overview'
-                  ? "Here's where your academic world stands today."
-                  : 'The details that keep your academic life moving.'}
-              </p>
+              <h1>{view === 'overview' ? `${roles[session.role]} overview` : title}</h1>
             </div>
             <button
               className="button button-outline button-small refresh-button"
+              aria-label="Refresh dashboard"
               onClick={reload}
               disabled={refreshing || loading}
             >
@@ -437,8 +409,8 @@ function Overview({
       ]
     : teacher
     ? [
-        { label: 'Courses you teach', value: data.courses.length, note: 'Assigned to your teaching portfolio', icon: BookOpen },
-        { label: 'Class groups', value: data.classes.length, note: 'Academic communities you lead', icon: UsersRound },
+        { label: 'Courses you teach', value: data.courses.length, note: 'Assigned to your account', icon: BookOpen },
+        { label: 'Class groups', value: data.classes.length, note: 'Classes assigned to you', icon: UsersRound },
         {
           label: 'Results recorded',
           value: data.grades.length,
@@ -469,59 +441,20 @@ function Overview({
 
   return (
     <>
-      <section className="welcome-banner">
-        <div className="banner-photo" />
-        <div className="banner-copy">
-          <span className="banner-kicker">
-            <span />
-            {admin ? 'INSTITUTIONAL DASHBOARD' : teacher ? 'SHAPING WHAT COMES NEXT' : 'THIS IS YOUR CHAPTER'}
-          </span>
-          <h2>
-            {admin ? (
-              <>
-                A thriving campus
-                <br />
-                starts with <em>you.</em>
-              </>
-            ) : teacher ? (
-              <>
-                Great minds need
-                <br />
-                <em>great guidance.</em>
-              </>
-            ) : (
-              <>
-                Small steps today.
-                <br />
-                <em>Extraordinary tomorrows.</em>
-              </>
-            )}
-          </h2>
-          <p>
-            {admin
-              ? 'Full management across students, lecturers, classrooms, courses and grading sessions.'
-              : teacher
-              ? 'Inspire your students. Celebrate their progress.'
-              : 'Stay curious. Follow your progress. Keep moving forward.'}
-          </p>
-          <button className="button button-light" onClick={() => onNavigate(admin ? 'classes' : teacher ? 'record' : 'results')}>
-            {admin ? 'Manage your campus' : teacher ? 'Record a result' : 'Explore my results'}
-            <ArrowUpRight size={17} />
-          </button>
+      <section className="workspace-intro">
+        <div>
+          <span className="workspace-label">{admin ? 'Administration' : teacher ? 'Lecturer workspace' : 'Student workspace'}</span>
+          <h2>{admin ? 'Class management' : teacher ? 'Course gradebook' : 'My academic results'}</h2>
+          <p>{admin ? 'Assign students and lecturers to class groups.' : teacher ? 'Enter assessment and exam scores, or correct a saved result.' : 'Review your assessment, exam score and total for each course.'}</p>
         </div>
-        <span className="banner-seal">
-          <GraduationCap size={36} />
-          <small>
-            DAVE
-            <br />
-            UNIVERSITY
-          </small>
-        </span>
-        <span className="banner-caption">A WORLD OF POSSIBILITY</span>
+        <button className="button button-light" onClick={() => onNavigate(admin ? 'classes' : teacher ? 'record' : 'results')}>
+          {admin ? 'Manage classes' : teacher ? 'Record a result' : 'View my results'}
+          <ArrowUpRight size={17} aria-hidden="true" />
+        </button>
       </section>
 
       <div className="metrics-grid">
-        {metrics.map((m, i) => (
+        {metrics.map((m) => (
           <article className="metric-card" key={m.label}>
             <div className="metric-label">
               <span>{m.label}</span>
@@ -529,9 +462,7 @@ function Overview({
             </div>
             <div className="metric-number">
               {m.value}
-              <span className={`metric-symbol symbol-${i % 3}`}>
-                <ArrowUpRight size={20} />
-              </span>
+
             </div>
             <p>{m.note}</p>
           </article>
@@ -549,8 +480,8 @@ function Overview({
         <div className="overview-columns">
           <section className="panel">
             <PanelHeading
-              eyebrow="YOUR ACADEMIC COMMUNITY"
-              title="A place for everyone"
+              eyebrow="STUDENT DIRECTORY"
+              title="Class placements"
               action={
                 <button className="text-button" onClick={() => onNavigate('students')}>
                   View directory <ArrowUpRight size={15} />

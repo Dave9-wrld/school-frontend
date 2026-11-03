@@ -1,5 +1,5 @@
 'use client';
-import { useState, type FormEvent } from 'react';
+import { useRef, useState, type FormEvent } from 'react';
 import { ArrowUpRight, BookOpen, CheckCircle2, PenLine, UsersRound } from 'lucide-react';
 import { api } from '@/lib/api';
 import type { Course, Grade, PortalData, Session } from '@/lib/types';
@@ -24,7 +24,7 @@ export function CourseCards({
 }) {
   return (
     <section>
-      <PanelHeading eyebrow="YOUR TEACHING WORLD" title="Courses with your name on them" />
+      <PanelHeading eyebrow="TEACHING" title="Your assigned courses" />
       {courses.length ? (
         <div className="course-grid">
           {courses.map((course, i) => (
@@ -38,7 +38,7 @@ export function CourseCards({
               <div className="course-card-bottom">
                 <span>{grades.filter((g) => g.subject === course.id).length} recorded results</span>
                 <button onClick={() => onRecord(course.id)} aria-label={`Record a result for ${course.name}`}>
-                  <ArrowUpRight size={20} />
+                  Record result <ArrowUpRight size={16} />
                 </button>
               </div>
             </article>
@@ -46,7 +46,7 @@ export function CourseCards({
         </div>
       ) : (
         <div className="panel">
-          <Empty title="Your teaching journey starts here">
+          <Empty title="No courses assigned yet">
             Your courses will appear when university administration assigns them to you.
           </Empty>
         </div>
@@ -72,6 +72,7 @@ export function RecordResult({
   const [ca, setCa] = useState('');
   const [exam, setExam] = useState('');
 
+  const studentSelect = useRef<HTMLSelectElement>(null);
   const canRecord = !!data.courses.length && !!data.students.length;
 
   const caNum = Number(ca) || 0;
@@ -79,8 +80,9 @@ export function RecordResult({
   const totalScore = caNum + examNum;
   const gradeInfo = getGradeLetter(totalScore);
 
-  const caExceeded = caNum > 40;
-  const examExceeded = examNum > 60;
+  const caExceeded = caNum < 0 || caNum > 40;
+  const examExceeded = examNum < 0 || examNum > 60;
+  const complete = ca !== '' && exam !== '' && !caExceeded && !examExceeded;
 
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -104,12 +106,12 @@ export function RecordResult({
         method: 'POST',
         body: JSON.stringify({
           student: Number(fields.student),
-          continous_assessment_score: fields.ca,
+          continuous_assessment_score: fields.ca,
           exam_score: fields.exam,
         }),
       });
       setSuccess(`${result.student_name}’s result is saved. Total: ${result.total_score} / 100 (${gradeInfo.letter} - ${gradeInfo.label}).`);
-      form.reset();
+      if (studentSelect.current) studentSelect.current.value = '';
       setCa('');
       setExam('');
       try {
@@ -129,7 +131,7 @@ export function RecordResult({
       <section className="panel form-panel">
         <PanelHeading
           eyebrow="TEACHING & ASSESSMENT"
-          title="Give progress a number"
+          title="Record a student result"
         />
         <p className="panel-intro">
           Record a student’s assessment and examination scores for the current academic session.
@@ -143,7 +145,8 @@ export function RecordResult({
               : 'You need an assigned course before recording results.'}
           </Notice>
         )}
-        <form onSubmit={submit}>
+        <form onSubmit={submit} onChange={() => { setSuccess(''); setError(''); }}>
+          <fieldset className="score-fields" disabled={busy || !canRecord}>
           <div className="form-row">
             <label>
               Course
@@ -158,7 +161,7 @@ export function RecordResult({
             </label>
             <label>
               Student
-              <select name="student" defaultValue="" required disabled={!canRecord}>
+              <select ref={studentSelect} name="student" defaultValue="" required disabled={!canRecord}>
                 <option value="">Choose a student</option>
                 {data.students.map((s) => (
                   <option key={s.id} value={s.id}>
@@ -180,12 +183,13 @@ export function RecordResult({
                 placeholder="0.00"
                 value={ca}
                 onChange={(e) => setCa(e.target.value)}
+                aria-invalid={caExceeded}
                 style={caExceeded ? { borderColor: '#c85a5a' } : undefined}
                 required
               />
               {caExceeded && (
                 <span style={{ color: '#c85a5a', fontSize: '10px', marginTop: '4px', display: 'block' }}>
-                  Maximum score is 40
+                  Enter a score from 0 to 40.
                 </span>
               )}
             </label>
@@ -200,29 +204,31 @@ export function RecordResult({
                 placeholder="0.00"
                 value={exam}
                 onChange={(e) => setExam(e.target.value)}
+                aria-invalid={examExceeded}
                 style={examExceeded ? { borderColor: '#c85a5a' } : undefined}
                 required
               />
               {examExceeded && (
                 <span style={{ color: '#c85a5a', fontSize: '10px', marginTop: '4px', display: 'block' }}>
-                  Maximum score is 60
+                  Enter a score from 0 to 60.
                 </span>
               )}
             </label>
           </div>
+          </fieldset>
           <div className="score-preview">
             <div>
-              <span className="eyebrow">THE BIG PICTURE</span>
-              <p>Combined score &amp; Grade</p>
+              <span className="eyebrow">RESULT PREVIEW</span>
+              <p>Combined score</p>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
               <output aria-live="polite">
-                {totalScore.toFixed(1)}
+                {complete ? Number(totalScore.toFixed(2)) : '—'}
                 <span> / 100</span>
               </output>
-              <span className={`grade-badge ${gradeInfo.tone}`} style={{ fontSize: '13px', padding: '5px 10px' }}>
+              {complete && <span className={`grade-badge ${gradeInfo.tone}`} style={{ fontSize: '13px', padding: '5px 10px' }}>
                 Grade {gradeInfo.letter}
-              </span>
+              </span>}
             </div>
           </div>
           <Submit busy={busy} disabled={!canRecord || caExceeded || examExceeded}>
@@ -237,12 +243,11 @@ export function RecordResult({
         <span className="guide-icon">
           <PenLine size={24} />
         </span>
-        <span className="eyebrow">A LITTLE GUIDANCE</span>
+        <span className="eyebrow">CURRENT SESSION</span>
         <h2>
-          Every mark<br />
-          tells a <em>story.</em>
+          Before you save
         </h2>
-        <p>A few checks before you save.</p>
+        <p>Saving again for the same course and student replaces their scores for this session.</p>
         <div className="guide-step">
           <span>01</span>
           <div>
