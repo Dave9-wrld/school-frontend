@@ -6,7 +6,6 @@ import { ArrowUpRight, BookOpen, CheckCircle2, Eye, EyeOff, LockKeyhole, ShieldC
 import { api, readSession, saveSession } from '@/lib/api';
 import type { Session } from '@/lib/types';
 import { Input } from './ui/input';
-import { Badge } from './ui/badge';
 import { Card } from './ui/card';
 import { Brand, Notice, Submit } from './ui';
 
@@ -63,13 +62,12 @@ export function AuthScreen({ mode }: { mode: 'login' | 'register' }) {
   const passwordsMatch = register && passwordValue.length > 0 && passwordValue === confirmPasswordValue;
 
   return (
-    <main className={`auth-page campus-auth${register ? '' : ' campus-signin'}`}>
+    <main className="auth-page campus-auth campus-entry">
       <section className="auth-content">
         <Link href="/login" aria-label="Dave University home">
-          <Brand light={!register} />
+          <Brand light />
         </Link>
         <Card className={`auth-form-wrap ${register ? 'register-form' : ''}`}>
-          {register && <Badge variant="secondary" className="edition-tag"><BookOpen size={14} /> Academic portal</Badge>}
           <h1>{register ? 'Create your account' : 'Welcome back.'}</h1>
           <p className="auth-intro">{register ? 'Register to view your courses and academic results.' : 'Sign in with your university account.'}</p>
 
@@ -88,7 +86,6 @@ export function AuthScreen({ mode }: { mode: 'login' | 'register' }) {
                       autoComplete="given-name"
                       placeholder="e.g. Samuel"
                       maxLength={150}
-                      autoFocus
                       required
                     />
                   </label>
@@ -229,7 +226,6 @@ export function AuthScreen({ mode }: { mode: 'login' | 'register' }) {
           className="campus-photo"
         />
         <div className="photo-shade" />
-        {register && <div className="campus-masthead"><span>Dave University</span><span>Campus collection · 01</span></div>}
         <div className="campus-cover">
           <span className="cover-rule">THE CAMPUS SERIES</span>
           <h2>Life on<br /><em>campus.</em></h2>
