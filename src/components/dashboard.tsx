@@ -1,4 +1,7 @@
 'use client';
+import { Button } from './ui/button';
+import { Card } from './ui/card';
+import { Badge } from './ui/badge';
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
@@ -283,10 +286,10 @@ export function Dashboard() {
               <CalendarDays size={15} />
               {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
             </span>
-            <span className="role-pill">
+            <Badge variant="outline" className="role-pill">
               <span />
               {roles[session.role]} portal
-            </span>
+            </Badge>
           </div>
         </header>
         <main className="dashboard-main" id="main-content">
@@ -447,15 +450,15 @@ function Overview({
           <h2>{admin ? 'Class management' : teacher ? 'Course gradebook' : 'My academic results'}</h2>
           <p>{admin ? 'Assign students and lecturers to class groups.' : teacher ? 'Enter assessment and exam scores, or correct a saved result.' : 'Review your assessment, exam score and total for each course.'}</p>
         </div>
-        <button className="button button-light" onClick={() => onNavigate(admin ? 'classes' : teacher ? 'record' : 'results')}>
+        <Button className="hero-action" size="lg" onClick={() => onNavigate(admin ? 'classes' : teacher ? 'record' : 'results')}>
           {admin ? 'Manage classes' : teacher ? 'Record a result' : 'View my results'}
           <ArrowUpRight size={17} aria-hidden="true" />
-        </button>
+        </Button>
       </section>
 
       <div className="metrics-grid">
         {metrics.map((m) => (
-          <article className="metric-card" key={m.label}>
+          <Card className="metric-card" key={m.label}>
             <div className="metric-label">
               <span>{m.label}</span>
               <m.icon size={19} />
@@ -465,7 +468,7 @@ function Overview({
 
             </div>
             <p>{m.note}</p>
-          </article>
+          </Card>
         ))}
       </div>
 

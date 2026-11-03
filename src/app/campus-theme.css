@@ -1,0 +1,124 @@
+@layer theme, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
+@source "../components/ui";
+
+@theme inline {
+  --color-background: #ffffff;
+  --color-primary: #174f43;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #e4eee6;
+  --color-secondary-foreground: #1f5142;
+  --color-accent: #e6efe6;
+  --color-accent-foreground: #123e33;
+  --color-card: #fffefa;
+  --color-card-foreground: #1d302a;
+  --color-muted-foreground: #53685f;
+  --color-ring: #358474;
+  --color-input: #b9c8bd;
+  --color-destructive: #ac332d;
+}
+
+:root {
+  --ink: #1b302b;
+  --navy: #102f29;
+  --burgundy: #195043;
+  --wine: #246754;
+  --cream: #f4f5ef;
+  --paper: #fffefa;
+  --line: #dbe1d7;
+  --muted: #5f7067;
+}
+[data-slot="button"]:focus-visible, [data-slot="input"]:focus-visible {
+  outline: 3px solid #398677;
+  outline-offset: 2px;
+}
+
+.campus-auth {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  background: #f3f4ee;
+  padding: clamp(12px, 1.6vw, 26px);
+  gap: clamp(16px, 3vw, 56px);
+}
+.campus-auth .auth-content { grid-column: 2; grid-row: 1; padding: 24px clamp(10px, 2.5vw, 52px) 12px; gap: 20px; }
+.campus-auth .auth-form-wrap {
+  display: block;
+  max-width: 470px;
+  padding: clamp(25px, 3vw, 44px);
+  border: 1px solid #d6ddd2;
+  border-radius: 20px;
+  background: #fffefa;
+  box-shadow: 0 12px 45px -30px #123b32aa;
+}
+.edition-tag { color: #18513f; background: #e2eee1; padding: 5px 10px; letter-spacing: .025em; }
+.campus-auth .auth-form-wrap h1 { font: 400 clamp(40px, 4.4vw, 68px)/1.02 var(--serif); margin: 18px 0 8px; letter-spacing: -.035em; }
+.campus-auth .auth-intro { font: 400 15px/1.5 var(--sans); color: #58695f; margin: 0 0 26px; }
+.campus-auth .auth-form label { font-size: 13px; color: #263d33; }
+.campus-auth .auth-form input { height: 46px; font-size: 15px; background: white; border: 1px solid #b9c7bd; border-radius: 8px; }
+.campus-auth .button-primary { background: #195043; color: white; border-radius: 8px; min-height: 46px; font-size: 15px; }
+.campus-auth .button-primary:hover { background: #103e33; }
+.campus-auth .auth-switch, .campus-auth .recovery-link { font-size: 13px; }
+.campus-auth .auth-help { background: #eef3ec; color: #405b4c; border-radius: 8px; }
+.campus-auth .auth-help p { font-size: 12px; }
+.campus-auth .auth-visual {
+  grid-column: 1; grid-row: 1; position: relative; isolation: isolate;
+  overflow: hidden; border-radius: 18px; min-height: 590px;
+  background: #123b30; color: #fffaf0;
+}
+.campus-auth .campus-photo { height: 100%; width: 100%; inset: 0; object-fit: cover; filter: saturate(.78); }
+.campus-auth .photo-shade { inset: 0; background: linear-gradient(180deg,#102b2699 0%,transparent 32%,#102f2980 56%,#102d27fa 100%); }
+.campus-masthead, .campus-colophon { position: absolute; left: 7%; right: 7%; display: flex; align-items: center; gap: 10px; color: #fffaf0; }
+.campus-masthead { top: 30px; justify-content: space-between; border-bottom: 1px solid #ffffff66; padding-bottom: 16px; }
+.campus-masthead span:first-child { font: 30px var(--serif); }
+.campus-masthead span:last-child, .campus-colophon, .cover-rule { font: 600 11px/1.35 var(--sans); letter-spacing: .09em; }
+.campus-cover { position: absolute; bottom: 15%; left: 7%; }
+.cover-rule { color: #fff0bd; display: flex; align-items: center; gap: 10px; }
+.cover-rule::before { content: ""; width: 38px; height: 2px; background: #e5ca83; }
+.campus-cover h2 { font: 400 clamp(70px, 7.5vw, 128px)/.88 var(--serif); letter-spacing: -.034em; margin: 20px 0 0; color: #fffaf0; }
+.campus-cover em { color: #f4d892; }
+.campus-colophon { bottom: 27px; border-top: 1px solid #ffffff66; padding-top: 16px; }
+.campus-colophon span:last-child { margin-left: auto; }
+
+.sidebar { background: #102f29; }
+.nav-active { background: #254a3e; }
+.portal-shell .topbar { background: #fffefa; }
+.dashboard-title h1 { font-family: var(--sans); font-size: clamp(23px, 2.4vw, 36px); letter-spacing: -.045em; font-weight: 600; }
+.workspace-intro {
+  position: relative; isolation: isolate; overflow: hidden;
+  background: #133f34; border: 0; border-radius: 16px;
+  align-items: flex-start; flex-direction: column; gap: 19px;
+  padding: clamp(22px, 3vw, 40px); color: white;
+}
+.workspace-intro::before { content: ""; position: absolute; z-index: -1; inset: 0 0 0 29%;
+  background: linear-gradient(90deg,#133f34 0%,#133f34b5 39%,#133f342a 100%),url("/campus.jpg") center 52%/cover; }
+.workspace-intro .workspace-label { color: #f1dba5; text-transform: uppercase; font: 600 11px/1.4 var(--sans); letter-spacing: .13em; }
+.workspace-intro h2 { margin: 9px 0; font-size: clamp(36px, 3.7vw, 60px); }
+.workspace-intro p { color: #f2f7ef; max-width: 42ch; }
+.hero-action { background: #f8e5af; color: #203a2e; min-height: 44px; border: 0; }
+.hero-action:hover { background: #ffeebf; }
+.metric-card[data-slot="card"] { gap: 5px; border: 1px solid var(--line); border-radius: 12px; background: #fffefa; box-shadow: 0 3px 9px #20392d07; }
+.metric-card .metric-label svg { color: #387150; }
+.metric-card .metric-number { font-variant-numeric: tabular-nums; color: #123c31; }
+.course-card { border-radius: 12px; }
+.course-card-bottom button { border: 1px solid #899e8c; background: #ffffffa8; color: #204b3d; }
+@media (max-width: 760px) {
+  .campus-auth { display: flex; flex-direction: column; gap: 0; padding: 0; min-height: 100svh; }
+  .campus-auth .auth-content { padding: 20px 16px; min-height: auto; gap: 20px; }
+  .campus-auth .auth-form-wrap { margin: 0 auto; padding: 24px 20px; }
+  .campus-auth .auth-visual { display: block; order: -1; min-height: 0; height: 115px; border-radius: 0; }
+  .campus-auth .campus-photo { object-position: 50% 50%; }
+  .campus-auth .photo-shade { background: linear-gradient(90deg,#10372df5,#10372d38); }
+  .campus-masthead,.campus-colophon { display: none; }
+  .campus-cover { left: 22px; bottom: 20px; }
+  .campus-cover h2 { margin: 7px 0 0; font-size: 37px; }
+  .campus-cover h2 br { display: none; }
+  .campus-cover h2 em::before { content: " "; }
+  .campus-auth .auth-content > a, .campus-auth .auth-footer { width: 100%; max-width: 470px; margin: 0 auto; }
+  .campus-auth .auth-content .brand { transform: none; }
+  .campus-auth .auth-form input { font-size: 16px; }
+  .workspace-intro::before { inset-inline-start: 0; background-image: linear-gradient(90deg,#103b31f7,#103b31d4 58%,#103b31aa),url("/campus.jpg"); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .portal-shell .view-enter { animation: none; }
+  html { scroll-behavior: auto; }
+}

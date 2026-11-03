@@ -1,3 +1,4 @@
+import { Button } from './ui/button';
 import { ArrowUpRight, BookOpen, CheckCircle2, GraduationCap, LoaderCircle, X, AlertCircle } from 'lucide-react';
 import { useEffect, useRef, type ReactNode } from 'react';
 
@@ -9,7 +10,7 @@ export function Notice({children,success=false}: {children:ReactNode;success?:bo
   return <div className={`notice ${success ? 'notice-success' : ''}`} role={success ? 'status' : 'alert'}>{success ? <CheckCircle2 size={17}/> : <AlertCircle size={17}/>}<span>{children}</span></div>;
 }
 export function Submit({children,busy=false,disabled=false}: {children:ReactNode;busy?:boolean;disabled?:boolean}) {
-  return <button type="submit" className="button button-primary" disabled={busy || disabled}>{busy ? <LoaderCircle className="spin" size={17}/> : children}{!busy && <ArrowUpRight size={18}/>}</button>;
+  return <Button type="submit" size="lg" className="button button-primary" aria-busy={busy} disabled={busy || disabled}>{busy ? <><LoaderCircle className="spin" size={17}/> Please wait…</> : children}{!busy && <ArrowUpRight size={18}/>}</Button>;
 }
 export function Empty({title,children}: {title:string;children:ReactNode}) {
   return <div className="empty"><span><BookOpen size={25}/></span><h3>{title}</h3><p>{children}</p></div>;

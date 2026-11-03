@@ -6,6 +6,7 @@ import '@fontsource/dm-sans/700.css';
 import '@fontsource/instrument-serif/400.css';
 import '@fontsource/instrument-serif/400-italic.css';
 import './globals.css';
+import './campus-theme.css';
 
 export const metadata: Metadata = {
   title: {default: 'Dave University — Your next chapter', template: '%s | Dave University'},

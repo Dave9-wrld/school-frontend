@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { ArrowUpRight, BookOpen, CheckCircle2, Eye, EyeOff, LockKeyhole, ShieldCheck } from 'lucide-react';
 import { api, readSession, saveSession } from '@/lib/api';
 import type { Session } from '@/lib/types';
+import { Input } from './ui/input';
+import { Badge } from './ui/badge';
+import { Card } from './ui/card';
 import { Brand, Notice, Submit } from './ui';
 
 export function AuthScreen({ mode }: { mode: 'login' | 'register' }) {
@@ -60,45 +63,27 @@ export function AuthScreen({ mode }: { mode: 'login' | 'register' }) {
   const passwordsMatch = register && passwordValue.length > 0 && passwordValue === confirmPasswordValue;
 
   return (
-    <main className="auth-page">
+    <main className="auth-page campus-auth">
       <section className="auth-content">
         <Link href="/login" aria-label="Dave University home">
           <Brand />
         </Link>
-        <div className={`auth-form-wrap ${register ? 'register-form' : ''}`}>
-          <div className="tiny-label">
-            <span /> YOUR UNIVERSITY. YOUR POSSIBILITIES.
-          </div>
-          <h1>
-            {register ? (
-              <>
-                A new chapter<br />
-                starts with <em>you.</em>
-              </>
-            ) : (
-              <>
-                Welcome<br />
-                <em>back to possibility.</em>
-              </>
-            )}
-          </h1>
-          <p className="auth-intro">
-            {register
-              ? 'Create your student account and make yourself at home.'
-              : 'Your academic world, all in one place. Sign in to pick up where you left off.'}
-          </p>
+        <Card className={`auth-form-wrap ${register ? 'register-form' : ''}`}>
+          <Badge variant="secondary" className="edition-tag"><BookOpen size={14} /> Academic portal</Badge>
+          <h1>{register ? 'Create your account' : 'Welcome back.'}</h1>
+          <p className="auth-intro">{register ? 'Register to view your courses and academic results.' : 'Sign in with your university account.'}</p>
 
           <Notice>{error}</Notice>
           <Notice success>{message}</Notice>
 
           <form onSubmit={submit} className="auth-form">
-            {register && <label>Admission number (optional)<input name="admission_number" maxLength={20} placeholder="Enter your assigned admission number"/></label>}
+            {register && <label>Admission number (optional)<Input name="admission_number" maxLength={20} placeholder="Enter your assigned admission number"/></label>}
             {register && (
               <>
                 <div className="form-row">
                   <label>
                     First name
-                    <input
+                    <Input
                       name="first_name"
                       autoComplete="given-name"
                       placeholder="e.g. Samuel"
@@ -109,7 +94,7 @@ export function AuthScreen({ mode }: { mode: 'login' | 'register' }) {
                   </label>
                   <label>
                     Last name
-                    <input
+                    <Input
                       name="last_name"
                       autoComplete="family-name"
                       placeholder="e.g. Adebayo"
@@ -120,7 +105,7 @@ export function AuthScreen({ mode }: { mode: 'login' | 'register' }) {
                 </div>
                 <label>
                   Email address
-                  <input
+                  <Input
                     name="email"
                     type="email"
                     autoComplete="email"
@@ -133,7 +118,7 @@ export function AuthScreen({ mode }: { mode: 'login' | 'register' }) {
 
             <label>
               Username
-              <input
+              <Input
                 name="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -155,7 +140,7 @@ export function AuthScreen({ mode }: { mode: 'login' | 'register' }) {
                 )}
               </div>
               <div className="password-input">
-                <input
+                <Input
                   name="password"
                   type={showPassword ? 'text' : 'password'}
                   autoComplete={register ? 'new-password' : 'current-password'}
@@ -179,7 +164,7 @@ export function AuthScreen({ mode }: { mode: 'login' | 'register' }) {
                 <label>
                   Confirm password
                   <div className="password-input">
-                    <input
+                    <Input
                       name="confirm_password"
                       type={showConfirmPassword ? 'text' : 'password'}
                       autoComplete="new-password"
@@ -229,7 +214,7 @@ export function AuthScreen({ mode }: { mode: 'login' | 'register' }) {
                 : 'One unified entrance for students, lecturers, and administrators.'}
             </p>
           </div>
-        </div>
+        </Card>
 
         <footer className="auth-footer">
           <span>© {new Date().getFullYear()} Dave University</span>
@@ -242,37 +227,16 @@ export function AuthScreen({ mode }: { mode: 'login' | 'register' }) {
       <aside className="auth-visual">
         <img
           src="/campus.jpg"
-          alt="Tree-lined university grounds in warm autumn light"
+          alt="Graduates tossing their caps into the air"
           className="campus-photo"
         />
         <div className="photo-shade" />
-        <div className="visual-top">
-          <span className="outline-pill">
-            <span /> THE DAVE EXPERIENCE
-          </span>
-          <span className="visual-year">LEARN. GROW. BECOME.</span>
+        <div className="campus-masthead"><span>Dave University</span><span>Campus collection · 01</span></div>
+        <div className="campus-cover">
+          <span className="cover-rule">THE CAMPUS SERIES</span>
+          <h2>Life on<br /><em>campus.</em></h2>
         </div>
-        <div className="visual-copy">
-          <div className="visual-rule" />
-          <span className="eyebrow">A WORLD OF POSSIBILITIES</span>
-          <h2>
-            Great futures<br />
-            begin with<br />
-            <em>curious minds.</em>
-          </h2>
-          <p>
-            A place for your ambition.<br />
-            A home for everything you’re becoming.
-          </p>
-        </div>
-        <div className="visual-bottom">
-          <span>
-            <BookOpen size={20} /> Knowledge is just the beginning.
-          </span>
-          <span className="round-arrow">
-            <ArrowUpRight size={24} />
-          </span>
-        </div>
+        <div className="campus-colophon"><BookOpen size={17} /><span>Academic Affairs</span><span>DU / 01</span></div>
       </aside>
     </main>
   );
