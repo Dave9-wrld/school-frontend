@@ -122,3 +122,53 @@
   .portal-shell .view-enter { animation: none; }
   html { scroll-behavior: auto; }
 }
+
+/* One photographic canvas, with the login form in the foreground. */
+.campus-signin {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 445px);
+  align-items: center;
+  min-height: 100svh;
+  padding: clamp(28px, 6vw, 98px);
+  background: #183c34;
+}
+.campus-signin .auth-visual {
+  display: block; position: absolute; inset: 0; z-index: -1;
+  height: 100%; min-height: 0; border-radius: 0; pointer-events: none;
+  grid-area: auto;
+}
+.campus-signin .campus-photo { object-position: 47% 49%; }
+.campus-signin .photo-shade {
+  background: linear-gradient(0deg, #061f19de, transparent 65%),
+              linear-gradient(110deg, #102c2a91, #102c2a14 49%, #102c2a70);
+}
+.campus-signin .auth-content { padding: 0; gap: 0; min-height: 0; }
+.campus-signin .auth-content > a {
+  position: absolute; top: clamp(22px, 4.5vh, 54px); left: clamp(28px, 6vw, 98px);
+  width: auto; margin: 0;
+}
+.campus-signin .brand-caption { color: #faf4df; }
+.campus-signin .campus-cover { left: clamp(28px, 6vw, 98px); bottom: 17%; }
+.campus-signin .campus-colophon { left: clamp(28px, 6vw, 98px); right: 57%; bottom: 6%; }
+.campus-signin .auth-form-wrap {
+  width: 100%; margin: 0; border: 1px solid #ffffffe0;
+  border-radius: 22px; padding: clamp(25px, 3.3vw, 48px);
+  background: #faf9f1ed; backdrop-filter: blur(17px);
+  box-shadow: inset 0 1px 0 white, 0 16px 65px #071b1a36;
+}
+.campus-signin .auth-form-wrap::before { content: ""; display: block; width: 34px; height: 3px; background: #957238; }
+.campus-signin .auth-form-wrap h1 { margin-top: 22px; }
+.campus-signin .auth-switch { margin-bottom: 0; }
+.campus-signin .auth-footer { color: white; margin: 14px 0 0; padding: 0 3px; }
+@media (max-width: 760px) {
+  .campus-signin { display: flex; justify-content: center; padding: 95px 20px 28px; }
+  .campus-signin .auth-content { width: min(100%, 420px); padding: 0; gap: 0; }
+  .campus-signin .auth-content > a { top: 22px; left: 22px; }
+  .campus-signin .auth-visual { order: initial; }
+  .campus-signin .campus-cover { display: none; }
+  .campus-signin .campus-photo { object-position: 44% center; }
+  .campus-signin .photo-shade { background: linear-gradient(170deg,#112e28ba,transparent 45%,#102f29dc); }
+  .campus-signin .auth-form-wrap { background: #faf9f1e8; }
+}

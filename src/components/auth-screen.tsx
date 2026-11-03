@@ -63,13 +63,13 @@ export function AuthScreen({ mode }: { mode: 'login' | 'register' }) {
   const passwordsMatch = register && passwordValue.length > 0 && passwordValue === confirmPasswordValue;
 
   return (
-    <main className="auth-page campus-auth">
+    <main className={`auth-page campus-auth${register ? '' : ' campus-signin'}`}>
       <section className="auth-content">
         <Link href="/login" aria-label="Dave University home">
-          <Brand />
+          <Brand light={!register} />
         </Link>
         <Card className={`auth-form-wrap ${register ? 'register-form' : ''}`}>
-          <Badge variant="secondary" className="edition-tag"><BookOpen size={14} /> Academic portal</Badge>
+          {register && <Badge variant="secondary" className="edition-tag"><BookOpen size={14} /> Academic portal</Badge>}
           <h1>{register ? 'Create your account' : 'Welcome back.'}</h1>
           <p className="auth-intro">{register ? 'Register to view your courses and academic results.' : 'Sign in with your university account.'}</p>
 
@@ -206,14 +206,12 @@ export function AuthScreen({ mode }: { mode: 'login' | 'register' }) {
             </Link>
           </p>
 
-          <div className="auth-help">
+          {register && <div className="auth-help">
             <ShieldCheck size={19} />
             <p>
-              {register
-                ? 'Student registration is immediate. Lecturer and administrator accounts are created and configured by university administration.'
-                : 'One unified entrance for students, lecturers, and administrators.'}
+              Student registration is immediate. University administration creates lecturer and administrator accounts.
             </p>
-          </div>
+          </div>}
         </Card>
 
         <footer className="auth-footer">
@@ -231,7 +229,7 @@ export function AuthScreen({ mode }: { mode: 'login' | 'register' }) {
           className="campus-photo"
         />
         <div className="photo-shade" />
-        <div className="campus-masthead"><span>Dave University</span><span>Campus collection · 01</span></div>
+        {register && <div className="campus-masthead"><span>Dave University</span><span>Campus collection · 01</span></div>}
         <div className="campus-cover">
           <span className="cover-rule">THE CAMPUS SERIES</span>
           <h2>Life on<br /><em>campus.</em></h2>
