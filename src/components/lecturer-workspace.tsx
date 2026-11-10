@@ -26,17 +26,17 @@ export function CourseCards({
     <section>
       <PanelHeading eyebrow="TEACHING" title="Your assigned courses" />
       {courses.length ? (
-        <div className="course-grid">
+        <div className="course-grid teaching-list">
           {courses.map((course, i) => (
             <article className={`course-card course-tone-${i % 3}`} key={course.id}>
               <div className="course-card-top">
                 <span className="course-code">{course.code}</span>
                 <BookOpen size={19} />
               </div>
-              <span className="course-index">{String(i + 1).padStart(2, '0')}</span>
+
               <h3>{course.name}</h3>
               <div className="course-card-bottom">
-                <span>{grades.filter((g) => g.subject === course.id).length} recorded results</span>
+                <span>Results recorded: {grades.filter((g) => g.subject === course.id).length}</span>
                 <button onClick={() => onRecord(course.id)} aria-label={`Record a result for ${course.name}`}>
                   Record result <ArrowUpRight size={16} />
                 </button>
@@ -277,7 +277,7 @@ export function RecordResult({
 export function TeacherClasses({ data }: { data: PortalData }) {
   return (
     <section>
-      <PanelHeading eyebrow="YOUR ACADEMIC COMMUNITY" title="The groups you guide" />
+      <PanelHeading eyebrow="CLASS DIRECTORY" title="Assigned classes" />
       {data.classes.length ? (
         <div className="course-grid">
           {data.classes.map((c) => (

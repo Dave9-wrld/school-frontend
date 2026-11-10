@@ -7,6 +7,7 @@ import '@fontsource/instrument-serif/400.css';
 import '@fontsource/instrument-serif/400-italic.css';
 import './globals.css';
 import './campus-theme.css';
+import './workspace.css';
 
 export const metadata: Metadata = {
   title: {default: 'Dave University — Your next chapter', template: '%s | Dave University'},
@@ -14,5 +15,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{children: React.ReactNode}>) {
-  return <html lang="en"><body>{children}</body></html>;
+  return <html lang="en" data-scroll-behavior="smooth"><body>{children}</body></html>;
 }

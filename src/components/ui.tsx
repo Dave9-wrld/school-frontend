@@ -13,7 +13,7 @@ export function Submit({children,busy=false,disabled=false}: {children:ReactNode
   return <Button type="submit" size="lg" className="button button-primary" aria-busy={busy} disabled={busy || disabled}>{busy ? <><LoaderCircle className="spin" size={17}/> Please wait…</> : children}{!busy && <ArrowUpRight size={18}/>}</Button>;
 }
 export function Empty({title,children}: {title:string;children:ReactNode}) {
-  return <div className="empty"><span><BookOpen size={25}/></span><h3>{title}</h3><p>{children}</p></div>;
+  return <div className="empty"><span><BookOpen size={25}/></span><h3>{title}</h3><div className="empty-detail">{children}</div></div>;
 }
 export function PanelHeading({eyebrow,title,action}: {eyebrow?:string;title:string;action?:ReactNode}) {
   return <div className="panel-heading"><div>{eyebrow && <span className="eyebrow">{eyebrow}</span>}<h2>{title}</h2></div>{action}</div>;

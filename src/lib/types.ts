@@ -87,6 +87,62 @@ export interface Grade {
   total_score: string | number;
 }
 
+export type EnrollmentStatus = 'ACTIVE' | 'COMPLETED' | 'WITHDRAWN';
+
+export interface CourseEnrollment {
+  id: number;
+  student: number;
+  student_name: string;
+  admission_number: string | null;
+  subject: number;
+  subject_name: string;
+  subject_code: string;
+  session: number;
+  session_name: string;
+  teacher_name: string | null;
+  status: EnrollmentStatus;
+  enrolled_on: string | null;
+  ended_on: string | null;
+  created_at: string;
+}
+
+export type AttendanceStatus = 'PRESENT' | 'ABSENT' | 'LATE' | 'EXCUSED';
+
+export interface AttendanceSession {
+  id: number;
+  subject: number;
+  subject_name: string;
+  subject_code: string;
+  academic_session: number;
+  session_name: string;
+  teacher_name: string | null;
+  date: string;
+  starts_at: string;
+  ends_at: string | null;
+  status: 'OPEN' | 'CLOSED';
+  record_count: number;
+  created_by: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AttendanceRecord {
+  id: number;
+  attendance_session: number;
+  course_enrollment: number;
+  student: number;
+  student_name: string;
+  admission_number: string | null;
+  subject_code: string;
+  subject_name: string;
+  session_date: string;
+  status: AttendanceStatus;
+  notes: string;
+  recorded_by: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Stats {
   total_teachers: number;
   total_students: number;
@@ -104,6 +160,9 @@ export interface PortalData {
   classes: ClassGroup[];
   lecturers: Lecturer[];
   sessions: AcademicSession[];
+  courseEnrollments: CourseEnrollment[];
+  attendanceSessions: AttendanceSession[];
+  attendanceRecords: AttendanceRecord[];
   profile: StudentProfile | null;
   stats: Stats | null;
 }

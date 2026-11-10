@@ -12,6 +12,7 @@ import {
   CheckCircle2,
   ChevronRight,
   CircleHelp,
+  ClipboardCheck,
   GraduationCap,
   LayoutDashboard,
   LogOut,
@@ -27,34 +28,41 @@ import {
   Layers,
 } from 'lucide-react';
 import { api, clearSession, readSession } from '@/lib/api';
-import type { AcademicSession, ClassGroup, Course, Grade, Lecturer, PortalData, Session, Stats, Student } from '@/lib/types';
+import type { AcademicSession, AttendanceRecord, AttendanceSession, ClassGroup, Course, CourseEnrollment, Grade, Lecturer, PortalData, Session, Stats, Student } from '@/lib/types';
 import { Brand, Empty, Notice, PanelHeading } from './ui';
 import { ResultsPanel } from './results-panel';
 import { CourseCards, RecordResult, TeacherClasses } from './lecturer-workspace';
 import { AdminWorkspace } from './admin-workspace';
+import { AttendanceWorkspace, EnrollmentWorkspace } from './attendance-workspace';
 
-type View = 'overview' | 'results' | 'courses' | 'record' | 'classes' | 'students' | 'lecturers' | 'sessions' | 'profile' | 'support';
-const emptyData: PortalData = { grades: [], courses: [], students: [], classes: [], lecturers: [], sessions: [], profile: null, stats: null };
+type View = 'overview' | 'results' | 'courses' | 'record' | 'classes' | 'students' | 'lecturers' | 'sessions' | 'enrollments' | 'attendance' | 'profile' | 'support';
+const emptyData: PortalData = { grades: [], courses: [], students: [], classes: [], lecturers: [], sessions: [], courseEnrollments: [], attendanceSessions: [], attendanceRecords: [], profile: null, stats: null };
 const roles = { ADMIN: 'Administrator', TEACHER: 'Lecturer', STUDENT: 'Student' };
 
 async function fetchData(session: Session): Promise<PortalData> {
   if (session.role === 'STUDENT') {
-    const [grades, profile] = await Promise.all([
+    const [grades, profile, courseEnrollments, attendanceSessions, attendanceRecords] = await Promise.all([
       api<Grade[]>('student/grades/', session),
       api<Student>('student/profile/', session),
+      api<CourseEnrollment[]>('course-enrollments/', session),
+      api<AttendanceSession[]>('attendance-sessions/', session),
+      api<AttendanceRecord[]>('attendance-records/', session),
     ]);
-    return { ...emptyData, grades, profile };
+    return { ...emptyData, grades, profile, courseEnrollments, attendanceSessions, attendanceRecords };
   }
   if (session.role === 'TEACHER') {
-    const [courses, students, classes, grades] = await Promise.all([
+    const [courses, students, classes, grades, courseEnrollments, attendanceSessions, attendanceRecords] = await Promise.all([
       api<Course[]>('teacher/subjects/', session),
       api<Student[]>('teacher/students/', session),
       api<ClassGroup[]>('teacher/classes/', session),
       api<Grade[]>('teacher/grades/', session),
+      api<CourseEnrollment[]>('course-enrollments/', session),
+      api<AttendanceSession[]>('attendance-sessions/', session),
+      api<AttendanceRecord[]>('attendance-records/', session),
     ]);
-    return { ...emptyData, courses, students, classes, grades };
+    return { ...emptyData, courses, students, classes, grades, courseEnrollments, attendanceSessions, attendanceRecords };
   }
-  const [stats, classes, lecturers, students, courses, sessions, grades] = await Promise.all([
+  const [stats, classes, lecturers, students, courses, sessions, grades, courseEnrollments, attendanceSessions, attendanceRecords] = await Promise.all([
     api<Stats>('admin/stats/', session),
     api<ClassGroup[]>('admin/classes/', session),
     api<Lecturer[]>('admin/teachers/', session),
@@ -62,8 +70,11 @@ async function fetchData(session: Session): Promise<PortalData> {
     api<Course[]>('admin/subjects/', session),
     api<AcademicSession[]>('admin/sessions/', session),
     api<Grade[]>('admin/grades/', session),
+    api<CourseEnrollment[]>('course-enrollments/', session),
+    api<AttendanceSession[]>('attendance-sessions/', session),
+    api<AttendanceRecord[]>('attendance-records/', session),
   ]);
-  return { ...emptyData, stats, classes, lecturers, students, courses, sessions, grades };
+  return { ...emptyData, stats, classes, lecturers, students, courses, sessions, grades, courseEnrollments, attendanceSessions, attendanceRecords };
 }
 
 export function Dashboard() {
@@ -111,10 +122,10 @@ export function Dashboard() {
       'overview',
       'support',
       ...(session.role === 'ADMIN'
-        ? (['classes', 'students', 'lecturers', 'courses', 'sessions', 'results'] as View[])
+        ? (['classes', 'students', 'lecturers', 'courses', 'sessions', 'enrollments', 'attendance', 'results'] as View[])
         : session.role === 'TEACHER'
-        ? (['courses', 'classes', 'record', 'results'] as View[])
-        : (['results', 'profile'] as View[])),
+        ? (['courses', 'classes', 'enrollments', 'attendance', 'record', 'results'] as View[])
+        : (['enrollments', 'attendance', 'results', 'profile'] as View[])),
     ];
     function restoreLocation() {
       const url = new URL(window.location.href);
@@ -206,19 +217,35 @@ export function Dashboard() {
           { view: 'lecturers' as View, label: 'Lecturer registry', icon: UserRound, count: data.lecturers.length },
           { view: 'courses' as View, label: 'Courses & subjects', icon: GraduationCap, count: data.courses.length },
           { view: 'sessions' as View, label: 'Academic sessions', icon: CalendarDays, count: data.sessions?.length || 0 },
+          { view: 'enrollments' as View, label: 'Course enrollment', icon: UsersRound, count: data.courseEnrollments.length },
+          { view: 'attendance' as View, label: 'Attendance', icon: ClipboardCheck, count: data.attendanceSessions.length },
           { view: 'results' as View, label: 'University results', icon: Trophy, count: data.grades.length },
         ]
       : teacher
       ? [
           { view: 'courses' as View, label: 'My courses', icon: BookOpen, count: data.courses.length },
           { view: 'classes' as View, label: 'My classes', icon: UsersRound },
+          { view: 'enrollments' as View, label: 'Enrolled students', icon: UsersRound, count: data.courseEnrollments.length },
+          { view: 'attendance' as View, label: 'Attendance', icon: ClipboardCheck, count: data.attendanceSessions.length },
           { view: 'record' as View, label: 'Record results', icon: PenLine },
           { view: 'results' as View, label: 'Recorded results', icon: GraduationCap, count: data.grades.length },
         ]
       : [
+          { view: 'enrollments' as View, label: 'My courses', icon: BookOpen, count: data.courseEnrollments.length },
+          { view: 'attendance' as View, label: 'My attendance', icon: ClipboardCheck, count: data.attendanceRecords.length },
           { view: 'results' as View, label: 'My results', icon: GraduationCap, count: data.grades.length },
           { view: 'profile' as View, label: 'My profile', icon: UserRound },
         ]),
+  ];
+
+  const mobileLinks: { view: View; label: string; icon: typeof Menu }[] = [
+    { view: 'overview', label: 'Home', icon: LayoutDashboard },
+    admin ? { view: 'students', label: 'Students', icon: UsersRound }
+      : teacher ? { view: 'courses', label: 'Courses', icon: BookOpen }
+      : { view: 'results', label: 'Results', icon: GraduationCap },
+    admin ? { view: 'classes', label: 'Classes', icon: BookOpen }
+      : teacher ? { view: 'record', label: 'Record', icon: PenLine }
+      : { view: 'profile', label: 'Profile', icon: UserRound },
   ];
 
   const title = nav.find((n) => n.view === view)?.label || 'Academic support';
@@ -226,7 +253,7 @@ export function Dashboard() {
   return (
     <div className="portal-shell">
       {menu && <button className="mobile-scrim" aria-label="Close navigation" onClick={() => setMenu(false)} />}
-      <aside className={`sidebar ${menu ? 'sidebar-open' : ''}`}>
+      <aside id="portal-navigation" className={`sidebar ${menu ? 'sidebar-open' : ''}`}>
         <div className="sidebar-brand">
           <Brand light compact />
           <button className="mobile-close icon-button" aria-label="Close navigation" onClick={() => setMenu(false)}>
@@ -274,7 +301,7 @@ export function Dashboard() {
       <div className="workspace">
         <header className="topbar">
           <div className="breadcrumb">
-            <button className="mobile-menu icon-button" onClick={() => setMenu(true)} aria-label="Open navigation">
+            <button aria-expanded={menu} aria-controls="portal-navigation" className="mobile-menu icon-button" onClick={() => setMenu(true)} aria-label="Open navigation">
               <Menu size={21} />
             </button>
             <span>Academic portal</span>
@@ -293,16 +320,9 @@ export function Dashboard() {
           </div>
         </header>
         <main className="dashboard-main" id="main-content">
-          {view !== "overview" && <nav className="page-navigation" aria-label="Page navigation">
-            <button className="back-button" onClick={goBack}>
-              <ArrowLeft size={16} /> Back
-            </button>
-              <button className="text-button" onClick={() => navigate('overview')}>
-                <LayoutDashboard size={15} /> Back to overview
-              </button>
-          </nav>}
           <div className="page-heading dashboard-title">
             <div>
+              {view !== 'overview' && <button className="return-link" onClick={goBack}><ArrowLeft size={14} /> {navigationDepth ? 'Back' : 'Overview'}</button>}
               <h1>{view === 'overview' ? `${roles[session.role]} overview` : title}</h1>
             </div>
             <button
@@ -340,6 +360,8 @@ export function Dashboard() {
                 </>
               )}
               {view === 'classes' && teacher && <TeacherClasses data={data} />}
+              {view === 'enrollments' && <EnrollmentWorkspace session={session} data={data} onSaved={refresh} />}
+              {view === 'attendance' && <AttendanceWorkspace session={session} data={data} onSaved={refresh} />}
               {['classes', 'students', 'lecturers', 'courses', 'sessions', 'results'].includes(view) && admin && (
                 <AdminWorkspace
                   key={view}
@@ -355,12 +377,20 @@ export function Dashboard() {
             </div>
           )}
           <footer className="dashboard-footer">
-            <span>Made for your next chapter.</span>
+            <span>Academic Affairs</span>
             <span>
               Dave University <i /> {new Date().getFullYear()}
             </span>
           </footer>
         </main>
+        <nav className="mobile-dock" aria-label="Quick navigation">
+          {mobileLinks.map(item => (
+            <button key={item.view} aria-current={view === item.view ? 'page' : undefined} onClick={() => navigate(item.view)}>
+              <item.icon size={19} /><span>{item.label}</span>
+            </button>
+          ))}
+          <button aria-expanded={menu} aria-controls="portal-navigation" onClick={() => setMenu(true)}><Menu size={19} /><span>Menu</span></button>
+        </nav>
       </div>
     </div>
   );
@@ -417,7 +447,7 @@ function Overview({
         {
           label: 'Results recorded',
           value: data.grades.length,
-          note: `Across ${new Set(data.grades.map((g) => g.student)).size} students in your courses`,
+          note: `Students assessed: ${new Set(data.grades.map((g) => g.student)).size}`,
           icon: PenLine,
         },
       ]
@@ -461,7 +491,7 @@ function Overview({
           <Card className="metric-card" key={m.label}>
             <div className="metric-label">
               <span>{m.label}</span>
-              <m.icon size={19} />
+              <span className="metric-icon"><m.icon size={17} /></span>
             </div>
             <div className="metric-number">
               {m.value}
@@ -524,7 +554,7 @@ function Overview({
           </section>
 
           <section className="panel quick-actions">
-            <PanelHeading eyebrow="KEEP THINGS MOVING" title="Administrative Control" />
+            <PanelHeading eyebrow="MANAGEMENT" title="Administration tools" />
             <button onClick={() => onNavigate('classes')}>
               <span className="quick-icon">
                 <BookOpen size={20} />
@@ -586,8 +616,8 @@ function Overview({
           <div className="overview-columns">
             <section className="panel performance-panel">
               <PanelHeading
-                eyebrow="SEE HOW FAR YOU’VE COME"
-                title="Progress, in perspective"
+                eyebrow="PERFORMANCE"
+                title="Course scores"
                 action={<span className="subtle-tag">Your latest recorded results</span>}
               />
               {data.grades.length ? (
@@ -609,15 +639,15 @@ function Overview({
                   ))}
                 </div>
               ) : (
-                <Empty title="Your progress has room to grow">Your course scores will bring this view to life.</Empty>
+                <Empty title="No scores yet">Scores appear here when a lecturer records a result.</Empty>
               )}
             </section>
             <section className="student-card">
-              <span className="eyebrow">A LITTLE ABOUT YOUR JOURNEY</span>
+              <span className="eyebrow">STUDENT RECORD</span>
               <span className="student-card-symbol">
                 <GraduationCap size={36} />
               </span>
-              <h2>{data.profile?.current_class_name || 'A world of possibility'}</h2>
+              <h2>{data.profile?.current_class_name || 'Class not assigned'}</h2>
               <p>{data.profile?.current_class_name ? 'Your current academic class' : 'Your class will appear here once it is assigned.'}</p>
               <div className="student-card-line">
                 <span>Student</span>
@@ -658,7 +688,7 @@ function Profile({ session, data }: { session: Session; data: PortalData }) {
         </div>
       </section>
       <section className="panel">
-        <PanelHeading eyebrow="YOUR ACADEMIC IDENTITY" title="The essentials" />
+        <PanelHeading eyebrow="STUDENT DETAILS" title="Account details" />
         <dl className="profile-details">
           <div>
             <dt>Full name</dt>

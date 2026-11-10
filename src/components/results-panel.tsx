@@ -42,7 +42,7 @@ export function ResultsPanel({ grades, lecturer = false }: { grades: Grade[]; le
   return (
     <section className="panel results-panel">
       <PanelHeading
-        eyebrow="EVERY STEP COUNTS"
+        eyebrow="GRADEBOOK"
         title={lecturer ? 'Recorded results' : 'Your academic record'}
         action={
           <button className="button button-outline button-small" onClick={download} disabled={!filtered.length}>
@@ -100,7 +100,7 @@ export function ResultsPanel({ grades, lecturer = false }: { grades: Grade[]; le
 
       {filtered.length ? (
         <>
-          <div className="table-scroll">
+          <div className="table-scroll result-ledger">
             <table>
               <thead>
                 <tr>
@@ -131,12 +131,12 @@ export function ResultsPanel({ grades, lecturer = false }: { grades: Grade[]; le
                       <td>
                         <span className="session-tag">{g.session_name}</span>
                       </td>
-                      <td>{Number(g.continous_assessment_score).toFixed(1)}</td>
-                      <td>{Number(g.exam_score).toFixed(1)}</td>
-                      <td>
+                      <td data-label="Assessment">{Number(g.continuous_assessment_score ?? g.continous_assessment_score).toFixed(1)}</td>
+                      <td data-label="Exam">{Number(g.exam_score).toFixed(1)}</td>
+                      <td data-label="Total">
                         <span className="score-chip">{score.toFixed(1)}</span>
                       </td>
-                      <td>
+                      <td data-label="Grade">
                         <span className={`grade-badge ${gradeInfo.tone}`} title={gradeInfo.label}>
                           {gradeInfo.letter}
                         </span>
@@ -156,7 +156,7 @@ export function ResultsPanel({ grades, lecturer = false }: { grades: Grade[]; le
         </>
       ) : (
         <Empty
-          title={grades.length ? 'No matching results' : 'Your next milestone is ahead'}
+          title={grades.length ? 'No matching results' : 'No results yet'}
         >
           {grades.length ? (
             <div>

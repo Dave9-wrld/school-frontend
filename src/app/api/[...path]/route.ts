@@ -1,12 +1,11 @@
 import type { NextRequest } from 'next/server';
+import { isAllowedApiRoute } from '@/lib/api-routes';
 export const dynamic = 'force-dynamic';
-
-const allowed = /^(login|register|logout|password-reset(?:\/confirm)?|admin\/(users|stats|classes|classes\/\d+|students|students\/\d+|students\/\d+\/class|teachers|teachers\/\d+|subjects|subjects\/\d+|sessions|sessions\/\d+|grades|grades\/\d+)|teacher\/(subjects|students|classes|grades|grades\/record\/\d+)|student\/(grades|profile))$/;
 
 async function proxy(request: NextRequest, context: {params: Promise<{path: string[]}>}) {
   const { path } = await context.params;
   const endpoint = path.join('/');
-  if (!allowed.test(endpoint)) return Response.json({detail:'Not found.'}, {status:404});
+  if (!isAllowedApiRoute(endpoint)) return Response.json({detail:'Not found.'}, {status:404});
   const origin = process.env.DJANGO_API_ORIGIN || 'http://127.0.0.1:8000';
   const headers = new Headers({Accept:'application/json'});
   for (const name of ['authorization', 'content-type']) {
