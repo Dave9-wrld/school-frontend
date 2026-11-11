@@ -38,6 +38,7 @@ import { AttendanceWorkspace, EnrollmentWorkspace } from './attendance-workspace
 type View = 'overview' | 'results' | 'courses' | 'record' | 'classes' | 'students' | 'lecturers' | 'sessions' | 'enrollments' | 'attendance' | 'profile' | 'support';
 const emptyData: PortalData = { grades: [], courses: [], students: [], classes: [], lecturers: [], sessions: [], courseEnrollments: [], attendanceSessions: [], attendanceRecords: [], profile: null, stats: null };
 const roles = { ADMIN: 'Administrator', TEACHER: 'Lecturer', STUDENT: 'Student' };
+const shortRoles = { ADMIN: 'Admin', TEACHER: 'Lecturer', STUDENT: 'Student' };
 
 async function fetchData(session: Session): Promise<PortalData> {
   if (session.role === 'STUDENT') {
@@ -313,9 +314,10 @@ export function Dashboard() {
               <CalendarDays size={15} />
               {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
             </span>
-            <Badge variant="outline" className="role-pill">
-              <span />
-              {roles[session.role]} portal
+            <Badge variant="outline" className="role-pill" aria-label={`${roles[session.role]} portal`}>
+              <span className="role-pill-dot" />
+              <span className="role-pill-full">{roles[session.role]} portal</span>
+              <span className="role-pill-short" aria-hidden="true">{shortRoles[session.role]}</span>
             </Badge>
           </div>
         </header>

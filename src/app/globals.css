@@ -21,6 +21,8 @@
 
 html {
   scroll-behavior: smooth;
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 body {
@@ -30,6 +32,8 @@ body {
   -webkit-font-smoothing: antialiased;
   margin: 0;
   font-size: 14px;
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 button, input, select {
@@ -846,12 +850,17 @@ form > label, form > .form-row {
   color: #9b9d94;
   align-items: center;
   gap: 12px;
+  min-width: 0;
   font-size: 10px;
   display: flex;
 }
 
 .breadcrumb strong {
   color: #4e605f;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-weight: 500;
 }
 
@@ -882,14 +891,20 @@ form > label, form > .form-row {
   gap: 6px;
   padding: 7px 10px;
   font-size: 9px;
+  flex-shrink: 0;
   display: flex;
 }
 
-.role-pill > span {
+.role-pill-dot {
   background: #68896c;
   border-radius: 50%;
+  flex-shrink: 0;
   width: 5px;
   height: 5px;
+}
+
+.role-pill-short {
+  display: none;
 }
 
 .dashboard-main {
@@ -1319,8 +1334,12 @@ form > label, form > .form-row {
 }
 
 .table-scroll {
+  max-width: 100%;
+  min-width: 0;
   width: 100%;
   overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 table {
@@ -2696,6 +2715,7 @@ tbody tr:hover {
 
   .topbar {
     height: 65px;
+    gap: 12px;
     padding: 0 22px;
   }
 
@@ -2709,6 +2729,19 @@ tbody tr:hover {
 
   .dashboard-main {
     padding: 27px 22px 0;
+  }
+
+  .view-enter,
+  .directory-panel,
+  .milestone-layout,
+  .milestone-table {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .table-scroll {
+    scrollbar-color: #91a99c #edf2ed;
+    scrollbar-width: thin;
   }
 
   .page-heading {
@@ -2854,12 +2887,21 @@ tbody tr:hover {
   }
 
   .topbar {
+    gap: 8px;
     padding: 0 16px;
   }
 
   .topbar .role-pill {
     padding: 6px 8px;
     font-size: 8px;
+  }
+
+  .role-pill-full {
+    display: none;
+  }
+
+  .role-pill-short {
+    display: inline;
   }
 
   .breadcrumb {
@@ -3125,6 +3167,48 @@ tbody tr:hover {
 
   .dashboard-footer {
     font-size: 7px;
+  }
+}
+
+@media (max-width: 360px) {
+  .topbar {
+    padding-inline: 12px;
+  }
+
+  .dashboard-main {
+    padding-inline: 12px;
+  }
+
+  .dialog-backdrop {
+    align-items: stretch;
+    padding: 8px;
+  }
+
+  .dialog {
+    max-height: calc(100dvh - 16px);
+    padding: 22px 18px;
+  }
+
+  .dialog .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .mobile-dock {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    padding-inline: 4px;
+  }
+
+  .mobile-dock button {
+    min-width: 0;
+    padding-inline: 2px;
+  }
+
+  .mobile-dock button span {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 
